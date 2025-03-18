@@ -1,0 +1,41 @@
+<.header>
+  Listing Card sets
+  <:actions>
+    <.link patch={~p"/card_sets/new"}>
+      <.button>New Card set</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="card_sets"
+  rows={@streams.card_sets}
+  row_click={fn {_id, card_set} -> JS.navigate(~p"/card_sets/#{card_set}") end}
+>
+  <:col :let={{_id, card_set}} label="Name">{card_set.name}</:col>
+  <:action :let={{_id, card_set}}>
+    <div class="sr-only">
+      <.link navigate={~p"/card_sets/#{card_set}"}>Show</.link>
+    </div>
+    <.link patch={~p"/card_sets/#{card_set}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, card_set}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: card_set.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="card_set-modal" show on_cancel={JS.patch(~p"/card_sets")}>
+  <.live_component
+    module={FlashCardsVoiceGeneratorWeb.CardSetLive.FormComponent}
+    id={@card_set.id || :new}
+    title={@page_title}
+    action={@live_action}
+    card_set={@card_set}
+    patch={~p"/card_sets"}
+  />
+</.modal>
