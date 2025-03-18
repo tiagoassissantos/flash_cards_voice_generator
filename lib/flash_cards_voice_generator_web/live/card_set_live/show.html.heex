@@ -1,0 +1,26 @@
+<.header>
+  Card set {@card_set.id}
+  <:subtitle>This is a card_set record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/card_sets/#{@card_set}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit card_set</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name">{@card_set.name}</:item>
+</.list>
+
+<.back navigate={~p"/card_sets"}>Back to card_sets</.back>
+
+<.modal :if={@live_action == :edit} id="card_set-modal" show on_cancel={JS.patch(~p"/card_sets/#{@card_set}")}>
+  <.live_component
+    module={FlashCardsVoiceGeneratorWeb.CardSetLive.FormComponent}
+    id={@card_set.id}
+    title={@page_title}
+    action={@live_action}
+    card_set={@card_set}
+    patch={~p"/card_sets/#{@card_set}"}
+  />
+</.modal>
